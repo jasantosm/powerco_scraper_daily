@@ -13,6 +13,8 @@ RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 # Install Python dependencies.
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
+ENV TZ=America/Bogota
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Copy local code to the container image.
 ENV APP_HOME /app
@@ -23,5 +25,5 @@ COPY . .
 # webserver, with one worker process and 8 threads.
 # For environments with multiple CPU cores, increase the number of workers
 # to be equal to the cores available.
-#CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 main:app
-CMD python main.py
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 main:app
+#CMD python main.py
