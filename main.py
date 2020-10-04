@@ -46,8 +46,6 @@ def selenium_scraper():
     if 1==1:
         try:
             
-            
-
             #Tables titles scraping
 
             scraped_table_titles = driver.find_elements_by_xpath('//div[@class="text-blue textL"]/b')
