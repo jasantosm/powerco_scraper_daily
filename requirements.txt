@@ -1,0 +1,9 @@
+# requirements.txt
+
+Flask==1.0.2
+gunicorn==19.9.0
+selenium==3.141.0
+chromedriver-binary==85.0.4183.87
+pandas
+beautifulsoup4
+lxml
