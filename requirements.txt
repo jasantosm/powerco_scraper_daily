@@ -7,3 +7,5 @@ chromedriver-binary==85.0.4183.87
 pandas
 beautifulsoup4
 lxml
+sqlalchemy
+mysqlclient
