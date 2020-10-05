@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 import chromedriver_binary  # Adds chromedriver binary to path
 from sqlalchemy import create_engine
+import sqlalchemy
 
 app = Flask(__name__)
 
@@ -19,13 +20,17 @@ chrome_options.add_argument("--no-sandbox")
 
 driver = webdriver.Chrome(options = chrome_options)
 
+@app.route("/")
+def app_root():
+    return 'Funciona!'
+
 
 @app.route("/xmscraper")
 def xm_scraper():
     tables_raw, date = selenium_scraper()
     day_list = transform(tables_raw,date)
     df = pd.DataFrame(day_list)
-    engine = create_engine('mysql+mysqldb://root:qju7lep86r1L4Nod@34.86.123.197:3306/xmdata', echo = False)
+    engine = create_engine('mysql+mysqldb://root:qju7lep86r1L4Nod@127.0.0.1:3306/xmdata', echo = False)
     df.to_sql(name = 'data_prepared', con = engine, if_exists = 'append', index = False)
 
     return 'Dia ' + str(date) + ' scrapiado'

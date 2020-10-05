@@ -10,6 +10,13 @@ RUN apt-get install -y gconf-service libasound2 libatk1.0-0 libcairo2 libcups2 l
 RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 RUN dpkg -i google-chrome-stable_current_amd64.deb; apt-get -fy install
 
+# download the cloudsql proxy binary
+RUN wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+RUN chmod +x cloud_sql_proxy
+COPY run.sh run.sh
+COPY credentials.json credentials.json
+
+
 # Install Python dependencies.
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
@@ -20,10 +27,11 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . .
-
+RUN chmod +x run.sh
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
 # For environments with multiple CPU cores, increase the number of workers
 # to be equal to the cores available.
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 main:app
+CMD ["./run.sh"]
+#CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 main:app
 #CMD python main.py
