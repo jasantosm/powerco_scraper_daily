@@ -36,6 +36,45 @@ def xm_scraper():
     return 'Dia ' + str(date) + ' scrapiado'
 
 
+
+@app.route("/pricescraper")
+def price_scraper():
+    price, date = price_selenium_scraper()
+
+    day_price = {}
+
+    day_price['date'] = date
+    day_price['precio_bolsa_tx1'] = price
+
+    prices_list = [day_price]
+
+    df = pd.DataFrame(prices_list)
+
+    engine = create_engine('mysql+mysqldb://root:qju7lep86r1L4Nod@127.0.0.1:3306/xmdata', echo = False)
+    df.to_sql(name = 'prices', con = engine, if_exists = 'append', index = False)
+
+    return 'Date: ' + str(date) + '\n' + 'Price: ' + price
+
+def price_selenium_scraper():
+    error = ''
+    try:
+        url = 'https://www.xm.com.co/Paginas/Home.aspx'
+        sleep_time = 3
+
+        driver.get(url)
+        time.sleep(sleep_time)
+
+        price_string = driver.find_elements_by_xpath('//div[@class="ax-home-marquee"]//ul[@id="ContenidoMarquesinaUno"]/li')[0].text
+
+        price = price_string.split('$')[0].split(':')[1].replace(' ', '')
+
+        date = pd.to_datetime('today')
+
+        return price, str(date)
+    except Exception as e:
+        error = str(e) 
+    return error
+
 def selenium_scraper():
     error = ''
     try:
